@@ -20,20 +20,16 @@ namespace AnkuluaCropPic
         string ImgFileName;
         Image sourceImage;
         Image viewImage;
+
         int objHeight = 0;
-        const int ImgWidth = 1920;
-        const int ImgHeight = 1080;
-        int ImgBoxWidth = 480;
-        int ImgBoxHeight = 270;
+        int ImgWidth = 1920;
+        int ImgHeight = 1080;
+        int ImgBoxWidth = 640;
+        int ImgBoxHeight = 360;
+        bool horizon = true;
         double magnification;
         const int space = 10;
-        const int btnWidth = 100;
-        const int btuHeight = 40;
         const int btuFontSize = 10;
-        const int txtBoxWidth = 200;
-        const int txtBoxHeight = 22;
-        const int labelBoxWidth = 300;
-        const int labelBoxHeight = 14;
 
         private Point RectStartPoint;                         // imageBoxInput's ROI 起始點 (picture coordinates)
         private Rectangle Rect = new Rectangle();             // imageBoxInput's ROI (picture coordinates)
@@ -43,28 +39,23 @@ namespace AnkuluaCropPic
         public Form1()
         {
             InitializeComponent();
-            Console.WriteLine();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             magnification = (double)ImgWidth / ImgBoxWidth;
 
-            Width = ImgBoxWidth + 380;
-            Height = space * 3 + ImgBoxHeight * 2 + 40;
-
             inputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
             inputImg.Location = new Point(space, space);
             inputImg.AllowDrop = true;
-
-            outputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
-            outputImg.Location = new Point(space, space*2+ inputImg.Height);
 
             rightPanel.Font = new Font("微軟正黑體", btuFontSize, FontStyle.Regular);
             rightPanel.Location= new Point(space * 3 + ImgBoxWidth, 0);
 
             pathLabel2.Text = "";
             ImgpathLabel2.Text = "";
+
+            setHorizonLarge();
         }
 
         private int CalHeight(int height)
@@ -88,16 +79,34 @@ namespace AnkuluaCropPic
             int y = Math.Max((int)Math.Floor(Rect.Location.Y * magnification) - 1, 0);
             int cx = Math.Min((int)Math.Floor(Rect.Width * magnification) + 1, ImgWidth);
             int cy = Math.Min((int)Math.Floor(Rect.Height * magnification) + 1, ImgHeight);
+            string ex = strFileNameEx == null ? ".png" : strFileNameEx;
 
-            result = ImgFileName + "=\"" + ImgFileName + ".png\"" + "\r\n" + ImgFileName + "reg=Region(" + x + "," + y + "," + cx + "," + cy + ")";
+            result = ImgFileName + "=\"" + ImgFileName + ex + "\"" + "\r\n" + ImgFileName + "reg=Region(" + x + "," + y + "," + cx + "," + cy + ")";
             outputCode.Text = result;
         }
 
-        private void setInputImg()
+        private void setInputImg(string src)
         {
             try
             {
+                Image tmp = Image.FromFile(src);
+                horizon = tmp.Height < tmp.Width;
+
+                if (horizon)
+                {
+                    setHorizonLarge();
+                    tmp.Dispose();
+                }
+                else
+                {
+                    setVerticalLarge();
+                    tmp.Dispose();
+                }
+
+                strFileName = src;
                 sourceImage = Image.FromFile(strFileName);
+                ImgWidth = sourceImage.Width;
+                ImgHeight = sourceImage.Height;
             }
             catch (Exception ex)
             {
@@ -153,8 +162,7 @@ namespace AnkuluaCropPic
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            strFileName = openFileDialog1.FileName;
-            setInputImg();
+            setInputImg(openFileDialog1.FileName);
         }
 
         private void setPath_Click(object sender, EventArgs e)
@@ -223,7 +231,6 @@ namespace AnkuluaCropPic
             graphics2.Dispose();
 
             setCodeTxt();
-            outputImg.Image = cropImage;
 
             int x = Math.Max((int)Math.Floor(Rect.Location.X * magnification), 0);
             int y = Math.Max((int)Math.Floor(Rect.Location.Y * magnification), 0);
@@ -242,12 +249,23 @@ namespace AnkuluaCropPic
         private void inputImg_Paint(object sender, PaintEventArgs e)
         {
             if (sourceImage == null)
-                return;
-
+            {
+                Brush br = new SolidBrush(Color.FromArgb(240, 240, 240));
+                e.Graphics.FillRectangle(br, new Rectangle(0, 0, ((PictureBox)sender).Width, ((PictureBox)sender).Height));
+            }
             if (Rect != null && Rect.Width > 0 && Rect.Height > 0)
             {
                 e.Graphics.SetClip(Rect, System.Drawing.Drawing2D.CombineMode.Exclude);
                 e.Graphics.FillRectangle(selectionBrush, new Rectangle(0, 0, ((PictureBox)sender).Width, ((PictureBox)sender).Height));
+            }
+        }
+
+        private void outputImg_Paint(object sender, PaintEventArgs e)
+        {
+            if (viewImage == null)
+            {
+                Brush br = new SolidBrush(Color.FromArgb(240, 240, 240));
+                e.Graphics.FillRectangle(br, new Rectangle(0, 0, ((PictureBox)sender).Width, ((PictureBox)sender).Height));
             }
         }
 
@@ -287,18 +305,22 @@ namespace AnkuluaCropPic
 
         private void inputImg_DragDrop(object sender, DragEventArgs e)
         {
-            try
+            if (e.Data.GetDataPresent("FileNameW"))
             {
-                //拖曳檔案是否存在
-                if (File.Exists(strFileName))
+                string[] data = (e.Data.GetData("FileNameW") as string[]);
+                try
                 {
-                    setInputImg();
+                    //拖曳檔案是否存在
+                    if (File.Exists(data[0]))
+                    {
+                        setInputImg(data[0]);
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("不是有效的圖檔格式");
-                Console.WriteLine(ex.Data);
+                catch (Exception ex)
+                {
+                    MessageBox.Show("不是有效的圖檔格式");
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 
@@ -306,10 +328,125 @@ namespace AnkuluaCropPic
         {
             if (e.Data.GetDataPresent("FileNameW"))
             {
-                string[] data = (e.Data.GetData("FileNameW") as string[]);
-                strFileName = data[0];
                 e.Effect = DragDropEffects.All;
             }
         }
+
+        private void smallScreen_CheckedChanged(object sender, EventArgs e)
+        {
+            if (smallScreen.Checked)
+            {
+                if (horizon)
+                {
+                    setHorizonSmall();
+                }
+                else
+                {
+                    setVerticalSmall();
+                }
+                
+            }
+        }
+
+        private void largeScreen_CheckedChanged(object sender, EventArgs e)
+        {
+            if (largeScreen.Checked)
+            {
+                if (horizon)
+                {
+                    setHorizonLarge();
+                }
+                else
+                {
+                    setVerticalLarge();
+                }
+            }
+
+        }
+
+        public void clean()
+        {
+            sourceImage = null;
+            viewImage = null;
+            outputFileImage = null;
+
+            strFileName = null;
+            strInputFilePath = null;
+            strFileNameEx = null;
+            ImgFileName = null;
+
+            ImgName.Text = "";
+            pathLabel2.Text = "";
+            ImgpathLabel2.Text = "";
+
+            Rect = new Rectangle();
+            RectStartPoint = new Point(0, 0);
+            inputImg.Refresh();
+        }
+
+        public void setVerticalSmall()
+        {
+            ImgBoxWidth = 270;
+            ImgBoxHeight = 480;
+            magnification = (double)ImgWidth / ImgBoxWidth;
+
+            flowLayoutPanel2.Width = ImgBoxWidth + rightPanel.Width + 50;
+            flowLayoutPanel2.Height = Math.Max(ImgBoxHeight + 70, rightPanel.Height + 50);
+            Width = flowLayoutPanel2.Width;
+            Height = flowLayoutPanel2.Height;
+
+            inputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
+
+            clean();
+        }
+
+        public void setVerticalLarge()
+        {
+            ImgBoxWidth = 360;
+            ImgBoxHeight = 640;
+            magnification = (double)ImgWidth / ImgBoxWidth;
+
+            flowLayoutPanel2.Width = ImgBoxWidth + rightPanel.Width + 50;
+            flowLayoutPanel2.Height = Math.Max(ImgBoxHeight + 70, rightPanel.Height + 50);
+            Width = flowLayoutPanel2.Width;
+            Height = flowLayoutPanel2.Height;
+
+            inputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
+
+            clean();
+        }
+
+        public void setHorizonSmall()
+        {
+            ImgBoxWidth = 480;
+            ImgBoxHeight = 270;
+            magnification = (double)ImgWidth / ImgBoxWidth;
+
+            flowLayoutPanel2.Width = ImgBoxWidth + rightPanel.Width + 50;
+            flowLayoutPanel2.Height = Math.Max(ImgBoxHeight + 70, rightPanel.Height + 50);
+            Width = flowLayoutPanel2.Width;
+            Height = flowLayoutPanel2.Height;
+
+            inputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
+
+            clean();
+        }
+
+        public void setHorizonLarge()
+        {
+            ImgBoxWidth = 640;
+            ImgBoxHeight = 360;
+            magnification = (double)ImgWidth / ImgBoxWidth;
+
+            flowLayoutPanel2.Width = ImgBoxWidth + rightPanel.Width + 50;
+            flowLayoutPanel2.Height = Math.Max(ImgBoxHeight + 70, rightPanel.Height + 50);
+            Width = flowLayoutPanel2.Width;
+            Height = flowLayoutPanel2.Height;
+
+            inputImg.Size = new Size(ImgBoxWidth, ImgBoxHeight);
+
+            clean();
+        }
+
     }
 }

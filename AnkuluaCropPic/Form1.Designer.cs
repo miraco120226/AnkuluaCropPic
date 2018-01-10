@@ -31,7 +31,6 @@
             this.openImg = new System.Windows.Forms.Button();
             this.inputImg = new System.Windows.Forms.PictureBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.outputImg = new System.Windows.Forms.PictureBox();
             this.ImgName = new System.Windows.Forms.TextBox();
             this.outputCode = new System.Windows.Forms.TextBox();
             this.Copy = new System.Windows.Forms.Button();
@@ -45,21 +44,27 @@
             this.scrollPanel1 = new System.Windows.Forms.Panel();
             this.pathPanel = new System.Windows.Forms.Panel();
             this.rightPanel = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.viewLabel = new System.Windows.Forms.Label();
+            this.largeScreen = new System.Windows.Forms.RadioButton();
+            this.smallScreen = new System.Windows.Forms.RadioButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.setPath = new System.Windows.Forms.Button();
             this.rememCheckBox = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.inputImg)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputImg)).BeginInit();
             this.outputPathPanel.SuspendLayout();
             this.scrollPanel2.SuspendLayout();
             this.inputPathPanel.SuspendLayout();
             this.scrollPanel1.SuspendLayout();
             this.pathPanel.SuspendLayout();
             this.rightPanel.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // openImg
@@ -77,9 +82,9 @@
             // inputImg
             // 
             this.inputImg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.inputImg.Location = new System.Drawing.Point(12, 12);
+            this.inputImg.Location = new System.Drawing.Point(3, 3);
             this.inputImg.Name = "inputImg";
-            this.inputImg.Size = new System.Drawing.Size(480, 270);
+            this.inputImg.Size = new System.Drawing.Size(640, 360);
             this.inputImg.TabIndex = 1;
             this.inputImg.TabStop = false;
             this.inputImg.DragDrop += new System.Windows.Forms.DragEventHandler(this.inputImg_DragDrop);
@@ -93,15 +98,6 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
-            // 
-            // outputImg
-            // 
-            this.outputImg.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.outputImg.Location = new System.Drawing.Point(12, 305);
-            this.outputImg.Name = "outputImg";
-            this.outputImg.Size = new System.Drawing.Size(480, 270);
-            this.outputImg.TabIndex = 2;
-            this.outputImg.TabStop = false;
             // 
             // ImgName
             // 
@@ -226,7 +222,7 @@
             this.pathPanel.Controls.Add(this.inputPathPanel);
             this.pathPanel.Controls.Add(this.outputPathPanel);
             this.pathPanel.Font = new System.Drawing.Font("新細明體", 10F);
-            this.pathPanel.Location = new System.Drawing.Point(0, 60);
+            this.pathPanel.Location = new System.Drawing.Point(0, 100);
             this.pathPanel.Margin = new System.Windows.Forms.Padding(0);
             this.pathPanel.Name = "pathPanel";
             this.pathPanel.Size = new System.Drawing.Size(300, 150);
@@ -234,20 +230,69 @@
             // 
             // rightPanel
             // 
+            this.rightPanel.BackColor = System.Drawing.SystemColors.Control;
+            this.rightPanel.Controls.Add(this.panel3);
             this.rightPanel.Controls.Add(this.panel2);
             this.rightPanel.Controls.Add(this.panel1);
             this.rightPanel.Controls.Add(this.pathPanel);
-            this.rightPanel.Location = new System.Drawing.Point(513, 12);
+            this.rightPanel.Location = new System.Drawing.Point(649, 3);
             this.rightPanel.Name = "rightPanel";
-            this.rightPanel.Size = new System.Drawing.Size(310, 500);
+            this.rightPanel.Size = new System.Drawing.Size(310, 460);
             this.rightPanel.TabIndex = 15;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.viewLabel);
+            this.panel3.Controls.Add(this.largeScreen);
+            this.panel3.Controls.Add(this.smallScreen);
+            this.panel3.Location = new System.Drawing.Point(0, 5);
+            this.panel3.Margin = new System.Windows.Forms.Padding(0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(300, 20);
+            this.panel3.TabIndex = 20;
+            // 
+            // viewLabel
+            // 
+            this.viewLabel.AutoSize = true;
+            this.viewLabel.Location = new System.Drawing.Point(0, 3);
+            this.viewLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.viewLabel.Name = "viewLabel";
+            this.viewLabel.Size = new System.Drawing.Size(53, 12);
+            this.viewLabel.TabIndex = 20;
+            this.viewLabel.Text = "檢視大小";
+            // 
+            // largeScreen
+            // 
+            this.largeScreen.AutoSize = true;
+            this.largeScreen.Checked = true;
+            this.largeScreen.Location = new System.Drawing.Point(160, 1);
+            this.largeScreen.Margin = new System.Windows.Forms.Padding(0);
+            this.largeScreen.Name = "largeScreen";
+            this.largeScreen.Size = new System.Drawing.Size(68, 16);
+            this.largeScreen.TabIndex = 19;
+            this.largeScreen.TabStop = true;
+            this.largeScreen.Text = "640x360 ";
+            this.largeScreen.UseVisualStyleBackColor = true;
+            this.largeScreen.CheckedChanged += new System.EventHandler(this.largeScreen_CheckedChanged);
+            // 
+            // smallScreen
+            // 
+            this.smallScreen.AutoSize = true;
+            this.smallScreen.Location = new System.Drawing.Point(70, 1);
+            this.smallScreen.Margin = new System.Windows.Forms.Padding(0);
+            this.smallScreen.Name = "smallScreen";
+            this.smallScreen.Size = new System.Drawing.Size(65, 16);
+            this.smallScreen.TabIndex = 19;
+            this.smallScreen.Text = "480x270";
+            this.smallScreen.UseVisualStyleBackColor = true;
+            this.smallScreen.CheckedChanged += new System.EventHandler(this.smallScreen_CheckedChanged);
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.openImg);
             this.panel2.Controls.Add(this.setPath);
             this.panel2.Controls.Add(this.rememCheckBox);
-            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Location = new System.Drawing.Point(0, 40);
             this.panel2.Margin = new System.Windows.Forms.Padding(0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(300, 40);
@@ -283,27 +328,34 @@
             this.panel1.Controls.Add(this.ImgName);
             this.panel1.Controls.Add(this.outputCode);
             this.panel1.Controls.Add(this.Copy);
-            this.panel1.Location = new System.Drawing.Point(0, 240);
+            this.panel1.Location = new System.Drawing.Point(0, 280);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(300, 160);
             this.panel1.TabIndex = 17;
             // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this.inputImg);
+            this.flowLayoutPanel2.Controls.Add(this.rightPanel);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(12, 10);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(962, 466);
+            this.flowLayoutPanel2.TabIndex = 17;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(853, 587);
-            this.Controls.Add(this.rightPanel);
-            this.Controls.Add(this.outputImg);
-            this.Controls.Add(this.inputImg);
+            this.ClientSize = new System.Drawing.Size(988, 511);
+            this.Controls.Add(this.flowLayoutPanel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(16, 500);
             this.Name = "Form1";
             this.Text = "AnkuluaCropPic";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.inputImg)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.outputImg)).EndInit();
             this.outputPathPanel.ResumeLayout(false);
             this.outputPathPanel.PerformLayout();
             this.scrollPanel2.ResumeLayout(false);
@@ -314,10 +366,13 @@
             this.scrollPanel1.PerformLayout();
             this.pathPanel.ResumeLayout(false);
             this.rightPanel.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -327,7 +382,6 @@
         private System.Windows.Forms.Button openImg;
         private System.Windows.Forms.PictureBox inputImg;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.PictureBox outputImg;
         private System.Windows.Forms.TextBox ImgName;
         private System.Windows.Forms.TextBox outputCode;
         private System.Windows.Forms.Button Copy;
@@ -346,6 +400,11 @@
         private System.Windows.Forms.CheckBox rememCheckBox;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.RadioButton largeScreen;
+        private System.Windows.Forms.RadioButton smallScreen;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label viewLabel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
     }
 }
 
